@@ -1,3 +1,10 @@
+#nav-section,#livesale-section{
+    background-color: #e74c3c;
+}
+#login-form,#reg-form{
+    border: solid 1px;
+    border-color: #e74c3c;
+}
 .owl-carousel .item{
  /* border: 1px solid black; */
  font-size: 24px;
