@@ -79,7 +79,7 @@ def show_cart(request):
         print(cart_product)
         if cart_product:
             for p in cart_product:
-                tempamount = (p.quantity*p.product.selling_price)
+                tempamount = (p.quantity*p.product.discounted_price)
                 amount += tempamount
                 total_amount = amount+shipping_amount
             return render(request, 'app/addtocart.html', {'carts': cart, 'total_amount': total_amount, 'amount': amount})

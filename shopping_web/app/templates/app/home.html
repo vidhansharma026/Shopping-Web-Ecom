@@ -55,7 +55,7 @@
  <div class="owl-carousel" id="slider2">
   {% for e in electronics %}
   <a href="{% url 'product-detail' e.id %}" class='btn'>
-  <div class="item border border-secondary"><img src="{{e.product_image.url}}" alt="" height="200px"><span class="fw-bold">{{e.title}}</span><br><span class="fs-5">{{e.selling_price}}</span></div></a>
+  <div class="item border border-secondary"><img src="{{e.product_image.url}}" alt="" height="200px"><span class="fw-bold">{{e.title}}</span><br><span class="fs-5">{{e.discounted_price}}</span></div></a>
   {% endfor %}
  </div>
 </div>
@@ -68,7 +68,7 @@
  <div class="owl-carousel" id="slider2">
   {% for a in accesories %}
   <a href="{% url 'product-detail' a.id %}" class='btn'>
-  <div class="item border border-secondary"><img src="{{a.product_image.url}}" alt="" height="200px"><span class="fw-bold">{{a.title}}</span><br><span class="fs-5">{{a.selling_price}}</span></div></a>
+  <div class="item border border-secondary"><img src="{{a.product_image.url}}" alt="" height="200px"><span class="fw-bold">{{a.title}}</span><br><span class="fs-5">{{a.discounted_price}}</span></div></a>
   {% endfor %}
  </div>
 </div>
@@ -81,7 +81,7 @@
  <div class="owl-carousel" id="slider2">
   {% for t in topwears %}
   <a href="{% url 'product-detail' t.id %}" class='btn'>
-  <div class="item border border-secondary"><img src="{{t.product_image.url}}" alt="" height="200px"><span class="fw-bold">{{t.title}}</span><br><span class="fs-5">{{t.selling_price}}</span></div></a>
+  <div class="item border border-secondary"><img src="{{t.product_image.url}}" alt="" height="200px"><span class="fw-bold">{{t.title}}</span><br><span class="fs-5">{{t.discounted_price}}</span></div></a>
   {% endfor %}
  </div>
 </div>
@@ -94,7 +94,7 @@
  <div class="owl-carousel" id="slider2">
   {% for b in bottomwears %}
   <a href="{% url 'product-detail' b.id %}" class='btn'>
-  <div class="item border border-secondary"><img src="{{b.product_image.url}}" alt="" height="200px"><span class="fw-bold">{{b.title}}</span><br><span class="fs-5">{{b.selling_price}}</span></div></a>
+  <div class="item border border-secondary"><img src="{{b.product_image.url}}" alt="" height="200px"><span class="fw-bold">{{b.title}}</span><br><span class="fs-5">{{b.discounted_price}}</span></div></a>
   {% endfor %}
  </div>
 </div>
