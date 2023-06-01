@@ -2,6 +2,8 @@ from django.shortcuts import render,redirect
 from . models import *
 from django.views import View
 from django.db.models import Q
+from django.http import JsonResponse
+# from .forms import CustomerRegistrationForm, CustomerProfileForm
 
 # def home(request):
 #  return render(request, 'app/home.html')
@@ -18,7 +20,8 @@ def buy_now(request):
  return render(request, 'app/buynow.html')
 
 def profile(request):
- return render(request, 'app/profile.html')
+ states = Customer.objects.all()
+ return render(request, 'app/profile.html',{'states': states})
 
 def address(request):
  return render(request, 'app/address.html')
@@ -29,8 +32,8 @@ def orders(request):
 def change_password(request):
  return render(request, 'app/changepassword.html')
 
-def electronics(request):
- return render(request, 'app/electronics.html')
+# def electronics(request):
+#  return render(request, 'app/electronics.html')
 
 def login(request):
  return render(request, 'app/login.html')
@@ -72,20 +75,152 @@ def show_cart(request):
     if request.user.is_authenticated:
         user = request.user
         cart = Cart.objects.filter(user=user)
-        amount = 0.0
+        actual_amount = 0.0
+        discount_amount = 0.0
         shipping_amount = 70.0
         total_amount = 0.0
         cart_product = [p for p in Cart.objects.all() if p.user == user]
         print(cart_product)
         if cart_product:
             for p in cart_product:
-                tempamount = (p.quantity*p.product.discounted_price)
-                amount += tempamount
-                total_amount = amount+shipping_amount
-            return render(request, 'app/addtocart.html', {'carts': cart, 'total_amount': total_amount, 'amount': amount})
+                discamount = (p.quantity*p.product.discounted_price)
+                sellamount = (p.quantity*p.product.selling_price)
+                discount_amount += discamount
+                actual_amount += sellamount
+                total_amount = discount_amount+shipping_amount
+            return render(request, 'app/addtocart.html', {'carts': cart, 'total_amount': total_amount, 'actual_amount': actual_amount, 'discount_amount':discount_amount})
         else:
             return render(request, 'app/emptycart.html')
+        
+def electronic(request, data=None):
+    if data == None:
+        electronic = Product.objects.filter(category='E')
+    elif data == 'Apple' or data == 'hp':
+        electronic = Product.objects.filter(category='E').filter(brand=data)
+    elif data == 'below':
+        electronic = Product.objects.filter(
+            category='E').filter(discounted_price__lt=10000)
+    elif data == 'above':
+        electronic = Product.objects.filter(
+            category='E').filter(discounted_price__gt=10000)
+    return render(request, 'app/electronic.html', {'electronic': electronic})
 
+def accesories(request, data=None):
+    if data == None:
+        accesories = Product.objects.filter(category='A')
+    elif data == 'godfather' or data == 'oliva':
+        accesories = Product.objects.filter(category='A').filter(brand=data)
+    elif data == 'below':
+        accesories = Product.objects.filter(
+            category='A').filter(discounted_price__lt=25000)
+    elif data == 'above':
+        accesories = Product.objects.filter(
+            category='A').filter(discounted_price__gt=25000)
+    return render(request, 'app/accesories.html', {'accesories': accesories})
+
+def topwears(request, data=None):
+    if data == None:
+        topwears = Product.objects.filter(category='TW')
+    elif data == 'ZARA' or data == 'GUCCI':
+        topwears = Product.objects.filter(category='TW').filter(brand=data)
+    elif data == 'below':
+        topwears = Product.objects.filter(
+            category='TW').filter(discounted_price__lt=1000)
+    elif data == 'above':
+        topwears = Product.objects.filter(
+            category='TW').filter(discounted_price__gt=1000)
+    return render(request, 'app/topwear.html', {'topwears': topwears})
+
+def bottomwears(request, data=None):
+    if data == None:
+        bottomwears = Product.objects.filter(category='BW')
+    elif data == 'ZARA' or data == 'GUCCI':
+        bottomwears = Product.objects.filter(category='BW').filter(brand=data)
+    elif data == 'below':
+        bottomwears = Product.objects.filter(
+            category='BW').filter(discounted_price__lt=1000)
+    elif data == 'above':
+        bottomwears = Product.objects.filter(
+            category='BW').filter(discounted_price__gt=1000)
+    return render(request, 'app/bottomwear.html', {'bottomwears': bottomwears})
+
+def plus_cart(request):
+    if request.method == 'GET':
+        prod_id = request.GET['prod_id']
+        c = Cart.objects.get(Q(product=prod_id) & Q(user=request.user))
+        c.quantity += 1
+        c.save()
+        discount_amount = 0.0
+        actual_amount = 0.0
+        shipping_amount = 70.0
+        cart_product = [p for p in Cart.objects.all() if p.user ==
+                        request.user]
+        for p in cart_product:
+            discamount = (p.quantity * p.product.discounted_price)
+            sellamount = (p.quantity*p.product.selling_price)
+            discount_amount += discamount
+            actual_amount += sellamount
+        data = {
+            'quantity': c.quantity,
+            'discount_amount': discount_amount,
+            'actual_amount': actual_amount,
+            'totalamount': discount_amount + shipping_amount
+        }
+        return JsonResponse(data)
+    
+def minus_cart(request):
+    if request.method == 'GET':
+        prod_id = request.GET['prod_id']
+        c = Cart.objects.get(Q(product=prod_id) & Q(user=request.user))
+        c.quantity -= 1
+        c.save()
+        discount_amount = 0.0
+        actual_amount = 0.0
+        shipping_amount = 70.0
+        cart_product = [p for p in Cart.objects.all() if p.user ==
+                        request.user]
+        for p in cart_product:
+            discamount = (p.quantity * p.product.discounted_price)
+            sellamount = (p.quantity*p.product.selling_price)
+            discount_amount += discamount
+            actual_amount += sellamount
+
+        data = {
+            'quantity': c.quantity,
+            'discount_amount': discount_amount,
+            'actual_amount': actual_amount,
+            'totalamount': discount_amount + shipping_amount
+        }
+        return JsonResponse(data)
+
+# class ProfileView(View):
+#     def get(self, request):
+#         form = CustomerProfileForm()
+#         return render(request, 'app/profile.html', {'form': form, 'active': 'btn-primary'})
+
+
+def remove_cart(request):
+    if request.method == 'GET':
+        prod_id = request.GET['prod_id']
+        c = Cart.objects.get(Q(product=prod_id) & Q(user=request.user))
+        c.delete()
+        discount_amount = 0.0
+        actual_amount = 0.0
+        shipping_amount = 70.0
+        cart_product = [p for p in Cart.objects.all() if p.user ==
+                        request.user]
+        for p in cart_product:
+            discamount = (p.quantity * p.product.discounted_price)
+            sellamount = (p.quantity * p.product.selling_price)
+            discount_amount += discamount
+            actual_amount += sellamount
+
+        data = {
+            'discount_amount': discount_amount,
+            'actual_amount': actual_amount,
+            'totalamount': discount_amount + shipping_amount
+        }
+        return JsonResponse(data)
 
 # from itertools import product
 # from statistics import quantiles

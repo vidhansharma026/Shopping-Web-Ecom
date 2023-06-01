@@ -1,7 +1,7 @@
 #nav-section,#livesale-section{
     background-color: #e74c3c;
 }
-#login-form,#reg-form{
+#login-form,#reg-form,#amount_receipt,#addtocart{
     border: solid 1px;
     border-color: #e74c3c;
 }
